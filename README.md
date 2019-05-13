@@ -1,6 +1,8 @@
-# Raspberrypi-linux
+# OS-raspberrypi
 
-This repo used to build raspberrypi-linux
+This repo used to build rancheros raspberrypi. Fetch all resource files from the upstream repositories:
+- [https://github.com/raspberrypi/linux](https://github.com/raspberrypi/linux)
+- [https://github.com/raspberrypi/firmware](https://github.com/raspberrypi/firmware)
 
 ## How to run
 ```shell
