@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+VERSION=$(cat dist/version)
+
+for file in $(ls dist/kernel); do
+	github-release upload  --user Jason-ZW --repo os-raspberrypi --tag ${VERSION} --file ./dist/kernel/${file} --name ${file}
+done
+
+for file in $(ls dist/firmware); do
+	github-release upload  --user Jason-ZW --repo os-raspberrypi --tag ${VERSION} --file ./dist/firmware/${file} --name ${file}
+done

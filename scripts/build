@@ -1,0 +1,46 @@
+#!/bin/bash
+set -e
+
+source $(dirname $0)/color
+cd $(dirname $0)/..
+
+DEF_CONFIG=${DEFCONFIG:="bcmrpi3_defconfig"}
+MAKE_CMD="make -j $(nproc) ARCH=$KERNEL_ARCH"
+
+echo "`yellow [START]` build kernel and modules..."
+	pushd ${DOWNLOADS}/kernel
+		# add kernel branding for rancheros
+		sed -i 's/^EXTRAVERSION =.*/EXTRAVERSION = -rancheros/g' Makefile
+		export LOCALVERSION=""
+
+		# configure the kernel
+		$MAKE_CMD $DEF_CONFIG
+
+		# copy .config to the /source/build/kernel directory
+		KERNEL_RELEASE=$($MAKE_CMD kernelrelease | grep "^4")
+		cp .config /source/build/kernel/$KERNEL_RELEASE.config
+
+		# build kernel and modules
+		$MAKE_CMD
+		$MAKE_CMD modules
+
+		# install kernel modules
+		INSTALL_DIR=${DOWNLOADS}/kernel/$KERNEL_RELEASE
+		if [[ -d $INSTALL_DIR ]]; then
+			rm -rf $INSTALL_DIR
+			mkdir -p $INSTALL_DIR
+		fi
+		$MAKE_CMD INSTALL_MOD_PATH=$INSTALL_DIR modules_install
+		rm $INSTALL_DIR/lib/modules/$KERNEL_RELEASE/{build,source}
+
+		# build kernel modules' dependencies
+		depmod -a -b $INSTALL_DIR $KERNEL_RELEASE
+
+		# install kernel, dtb and overlays
+		mkdir -p $INSTALL_DIR/boot/overlays
+		cp arch/arm64/boot/Image $INSTALL_DIR/boot/kernel8.img
+		cp arch/arm64/boot/dts/broadcom/bcm2710-rpi-3-b.dtb $INSTALL_DIR/boot/
+		cp arch/arm64/boot/dts/broadcom/bcm2710-rpi-3-b-plus.dtb $INSTALL_DIR/boot/
+		cp arch/arm64/boot/dts/overlays/*.dtbo $INSTALL_DIR/boot/overlays/
+	popd
+echo "`green [FINISHED]` build kernel and modules..."
