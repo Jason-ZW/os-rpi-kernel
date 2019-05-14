@@ -10,6 +10,7 @@ RUN apt-get update \
 		bc \
 		bison \
 		build-essential \
+		ca-certificates \
 		curl \
 		git-core \
 		flex \
@@ -20,15 +21,16 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -f /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN locale-gen en_US.UTF-8
+RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
 
 ARG DAPPER_HOST_ARCH
 ARG DOWNLOADS_DIR=/usr/src/downloads
 ARG KERNEL_ARCH=arm64
 ARG KERNEL_URL=https://github.com/raspberrypi/linux.git
 ARG KERNEL_BRANCH=rpi-4.14.y
+ARG KERNEL_VERSION=v4.14.114-rancher
 ARG FIRMWARE_URL=https://github.com/raspberrypi/firmware.git
-ARG FIRMWARE_BRANCH=1.20190401
+ARG FIRMWARE_BRANCH=master
 
 ENV DAPPER_ENV VERSION DEBUG
 ENV DAPPER_DOCKER_SOCKET true
@@ -40,10 +42,11 @@ ENV SHELL /bin/bash
 ENV LANG en_US.UTF-8
 ENV KERNEL_URL=${KERNEL_URL} \
 	KERNEL_BRANCH=${KERNEL_BRANCH} \
+	KERNEL_ARCH=${KERNEL_ARCH} \
+	KERNEL_VERSION=${KERNEL_VERSION} \
 	FIRMWARE_URL=${FIRMWARE_URL} \
 	FIRMWARE_BRANCH=${FIRMWARE_BRANCH} \
-	DOWNLOADS=${DOWNLOADS_DIR} \
-	KERNEL_ARCH=${KERNEL_ARCH}
+	DOWNLOADS=${DOWNLOADS_DIR}
 
 WORKDIR ${DAPPER_SOURCE}
 

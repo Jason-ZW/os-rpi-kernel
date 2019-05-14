@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+cd $(dirname $0)/..
+rm -rf build dist
+
+docker rmi $(docker images --format "{{.Repository}}:{{.Tag}}" | grep -E "rancher|kexec") || true
+docker rmi $(docker images --filter dangling=true -q) || true
+git clean -dxf

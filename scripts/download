@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+
+source $(dirname $0)/version
+source $(dirname $0)/color
+cd $(dirname $0)/..
+
+echo "`yellow [STARTING]` prepare directories..."
+	mkdir -p ${DOWNLOADS}/kernel ${DOWNLOADS}/firmware build/kernel build/firmware
+echo "`green [FINISHED]` prepare directories..."
+
+echo "`yellow [STARTING]` git clone requirements..."
+	git clone --single-branch --branch $KERNEL_BRANCH --depth 1 $KERNEL_URL ${DOWNLOADS}/kernel
+	git clone --single-branch --branch $FIRMWARE_BRANCH --depth 1 $FIRMWARE_URL ${DOWNLOADS}/firmware
+echo "`green [FINISHED]` git clone requirements..."

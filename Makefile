@@ -22,6 +22,6 @@ shell-bind: .dapper
 clean:
 	@./scripts/clean
 
-.DEFAULT_GOAL := default
+.DEFAULT_GOAL := ci
 
 .PHONY: $(TARGETS)
