@@ -1,4 +1,4 @@
-# OS-raspberrypi
+# OS-raspberrypi-kernel
 
 This repo used to build rancheros raspberrypi. Fetch all resource files from the upstream repositories:
 - [https://github.com/raspberrypi/linux](https://github.com/raspberrypi/linux)
