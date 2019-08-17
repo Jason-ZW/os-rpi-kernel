@@ -33,8 +33,10 @@ echo "`yellow [START]` package firmware files..."
 		FILE_LIST="
 		boot/LICENCE.*
 		boot/bootcode.bin
-		boot/fixup*.dat
-		boot/start*.elf
+		boot/fixup.dat
+		boot/fixup_cd.dat
+		boot/start.elf
+		boot/start_cd.elf
 		"
 		tar -cvzf rpi-bootloader.tar.gz $FILE_LIST
 		sha256sum rpi-bootloader.tar.gz > rpi-bootloader.tar.gz.sha256
