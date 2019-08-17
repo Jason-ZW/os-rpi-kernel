@@ -21,12 +21,11 @@ echo "`yellow [START]` build kernel and modules..."
 		$MAKE_CMD $DEF_CONFIG
 
 		# copy .config to the /source/build/kernel directory
-		KERNEL_RELEASE=$($MAKE_CMD kernelrelease | grep "^4")
+		KERNEL_RELEASE=$($MAKE_CMD kernelrelease | grep "^[45]")
 		cp .config /source/build/kernel/$KERNEL_RELEASE.config
 
 		# build kernel and modules
-		$MAKE_CMD
-		$MAKE_CMD modules
+		$MAKE_CMD Image modules dtbs
 
 		# install kernel modules
 		INSTALL_DIR=${DOWNLOADS}/kernel/$KERNEL_RELEASE
