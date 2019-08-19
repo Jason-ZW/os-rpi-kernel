@@ -5,7 +5,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive DEBCONF_NOWARNINGS=yes apt-
 	apt-utils \
 	&& rm -rf /var/lib/apt/lists/*
 
-
 RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
 		bc \
@@ -33,7 +32,6 @@ ARG DOWNLOADS_DIR=/usr/src/downloads
 ARG KERNEL_ARCH=arm64
 ARG KERNEL_URL=https://github.com/raspberrypi/linux.git
 ARG KERNEL_BRANCH=rpi-4.19.y
-ARG KERNEL_VERSION=4.19.66
 ARG FIRMWARE_URL=https://github.com/raspberrypi/firmware.git
 ARG FIRMWARE_BRANCH=master
 
@@ -48,7 +46,6 @@ ENV LANG en_US.UTF-8
 ENV KERNEL_URL=${KERNEL_URL} \
 	KERNEL_BRANCH=${KERNEL_BRANCH} \
 	KERNEL_ARCH=${KERNEL_ARCH} \
-	KERNEL_VERSION=${KERNEL_VERSION} \
 	FIRMWARE_URL=${FIRMWARE_URL} \
 	FIRMWARE_BRANCH=${FIRMWARE_BRANCH} \
 	DOWNLOADS=${DOWNLOADS_DIR}

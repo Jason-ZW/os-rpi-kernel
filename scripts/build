@@ -20,8 +20,13 @@ echo "`yellow [START]` build kernel and modules..."
 		# configure the kernel
 		$MAKE_CMD $DEF_CONFIG
 
-		# copy .config to the /source/build/kernel directory
+		# Save information about the built kernel
 		KERNEL_RELEASE=$($MAKE_CMD kernelrelease | grep "^[45]")
+		KERNEL_VERSION=$($MAKE_CMD kernelversion | grep "^[45]")
+		echo "$KERNEL_RELEASE" > /source/dist/kernelrelease
+		echo "v$KERNEL_VERSION-rancher" > /source/dist/version
+
+		# copy .config to the /source/build/kernel directory
 		cp .config /source/build/kernel/$KERNEL_RELEASE.config
 
 		# build kernel and modules
