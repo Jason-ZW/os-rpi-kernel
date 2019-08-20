@@ -1,8 +1,13 @@
-# OS-raspberrypi-kernel
+# OS RaspberryPI Kernel
+![GitHub release](https://img.shields.io/github/v/release/Jason-ZW/os-raspberrypi.svg)
 
 This repo used to build rancheros raspberrypi. Fetch all resource files from the upstream repositories:
 - [https://github.com/raspberrypi/linux](https://github.com/raspberrypi/linux)
 - [https://github.com/raspberrypi/firmware](https://github.com/raspberrypi/firmware)
+
+## Prepare
+- `docker`
+- `go get -u -v github.com/rancher/dapper`
 
 ## How to run
 ```shell
