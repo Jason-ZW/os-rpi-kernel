@@ -6,6 +6,10 @@ cd $(dirname $0)/..
 
 DEF_CONFIG=${DEFCONFIG:="bcmrpi3_defconfig"}
 MAKE_CMD="make -j $(nproc) ARCH=$KERNEL_ARCH"
+if [ $ARCH != $KERNEL_ARCH ]
+then
+	MAKE_CMD="${MAKE_CMD} CROSS_COMPILE=aarch64-linux-gnu-"
+fi
 
 echo "`yellow [START]` build kernel and modules..."
 	pushd ${DOWNLOADS}/kernel
@@ -16,13 +20,17 @@ echo "`yellow [START]` build kernel and modules..."
 		# configure the kernel
 		$MAKE_CMD $DEF_CONFIG
 
+		# Save information about the built kernel
+		KERNEL_RELEASE=$($MAKE_CMD kernelrelease | grep "^[45]")
+		KERNEL_VERSION=$($MAKE_CMD kernelversion | grep "^[45]")
+		echo "$KERNEL_RELEASE" > /source/dist/kernelrelease
+		echo "v$KERNEL_VERSION-rancher" > /source/dist/version
+
 		# copy .config to the /source/build/kernel directory
-		KERNEL_RELEASE=$($MAKE_CMD kernelrelease | grep "^4")
 		cp .config /source/build/kernel/$KERNEL_RELEASE.config
 
 		# build kernel and modules
-		$MAKE_CMD
-		$MAKE_CMD modules
+		$MAKE_CMD Image modules dtbs
 
 		# install kernel modules
 		INSTALL_DIR=${DOWNLOADS}/kernel/$KERNEL_RELEASE

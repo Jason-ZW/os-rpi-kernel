@@ -1,6 +1,14 @@
 FROM debian:9
 # FROM arm64=arm64v8/debian:9
 
+ARG DAPPER_HOST_ARCH
+ARG DOWNLOADS_DIR=/usr/src/downloads
+ARG KERNEL_ARCH=arm64
+ARG KERNEL_URL=https://github.com/raspberrypi/linux.git
+ARG KERNEL_BRANCH=rpi-4.14.y
+ARG FIRMWARE_URL=https://github.com/raspberrypi/firmware.git
+ARG FIRMWARE_BRANCH=master
+
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive DEBCONF_NOWARNINGS=yes apt-get install -y --no-install-recommends \
 	apt-utils \
 	&& rm -rf /var/lib/apt/lists/*
@@ -18,19 +26,14 @@ RUN apt-get update \
 		libncurses5-dev \
 		libssl-dev \
 		locales \
+	&& if [ "${DAPPER_HOST_ARCH}" != "arm64" ]; then \
+		DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+		gcc-aarch64-linux-gnu; \
+		fi \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& rm -f /bin/sh && ln -s /bin/bash /bin/sh
 
 RUN localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
-
-ARG DAPPER_HOST_ARCH
-ARG DOWNLOADS_DIR=/usr/src/downloads
-ARG KERNEL_ARCH=arm64
-ARG KERNEL_URL=https://github.com/raspberrypi/linux.git
-ARG KERNEL_BRANCH=rpi-4.14.y
-ARG KERNEL_VERSION=4.14.114
-ARG FIRMWARE_URL=https://github.com/raspberrypi/firmware.git
-ARG FIRMWARE_BRANCH=master
 
 ENV DAPPER_ENV VERSION DEBUG
 ENV DAPPER_DOCKER_SOCKET true
@@ -43,7 +46,6 @@ ENV LANG en_US.UTF-8
 ENV KERNEL_URL=${KERNEL_URL} \
 	KERNEL_BRANCH=${KERNEL_BRANCH} \
 	KERNEL_ARCH=${KERNEL_ARCH} \
-	KERNEL_VERSION=${KERNEL_VERSION} \
 	FIRMWARE_URL=${FIRMWARE_URL} \
 	FIRMWARE_BRANCH=${FIRMWARE_BRANCH} \
 	DOWNLOADS=${DOWNLOADS_DIR}

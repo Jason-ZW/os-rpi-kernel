@@ -4,10 +4,13 @@ set -e
 source $(dirname $0)/color
 cd $(dirname $0)/..
 
+export KERNEL_VERSION=$(cat /source/dist/kernelrelease)
+
 : ${PACKAGE_KERNEL_DIR:=/source/dist/kernel}
 : ${PACKAGE_FIRMWARE_DIR:=/source/dist/firmware}
-: ${INSTALL_DIR:=$KERNEL_VERSION-rancheros-v8}
-: ${KERNEL_CONFIG:=$KERNEL_VERSION-rancheros-v8.config}
+: ${INSTALL_DIR:=$KERNEL_VERSION}
+: ${KERNEL_CONFIG:=$KERNEL_VERSION.config}
+echo $KERNEL_VERSION
 
 echo "`yellow [STARTING]` prepare package directories..."
 	mkdir -p $PACKAGE_KERNEL_DIR
@@ -16,8 +19,9 @@ echo "`green [FINISHED]` prepare package directories..."
 
 echo "`yellow [STARTING]` package kernel files..."
 	pushd ${DOWNLOADS}/kernel
-		tar -cvzf $KERNEL_VERSION-rancheros-v8.tar.gz -C $INSTALL_DIR .
-		sha256sum $KERNEL_VERSION-rancheros-v8.tar.gz > $KERNEL_VERSION-rancheros-v8.tar.gz.sha256
+		echo tar -cvzf $KERNEL_VERSION.tar.gz -C $INSTALL_DIR .
+		tar -cvzf $KERNEL_VERSION.tar.gz -C $INSTALL_DIR .
+		sha256sum $KERNEL_VERSION.tar.gz > $KERNEL_VERSION.tar.gz.sha256
 	popd
 echo "`green [FINISHED]` package kernel files..."
 
@@ -33,8 +37,10 @@ echo "`yellow [START]` package firmware files..."
 		FILE_LIST="
 		boot/LICENCE.*
 		boot/bootcode.bin
-		boot/fixup*.dat
-		boot/start*.elf
+		boot/fixup.dat
+		boot/fixup_cd.dat
+		boot/start.elf
+		boot/start_cd.elf
 		"
 		tar -cvzf rpi-bootloader.tar.gz $FILE_LIST
 		sha256sum rpi-bootloader.tar.gz > rpi-bootloader.tar.gz.sha256
@@ -43,13 +49,12 @@ echo "`green [FINISHED]` build firmware files..."
 
 echo "`yellow [STARTING]` copy necessary files to the dest..."
 	pushd ${DOWNLOADS}/kernel
-		cp $KERNEL_VERSION-rancheros-v8.tar.gz* $PACKAGE_KERNEL_DIR
+		cp $KERNEL_VERSION.tar.gz* $PACKAGE_KERNEL_DIR
 		cp bootfiles.tar.gz* $PACKAGE_KERNEL_DIR
 		cp /source/build/kernel/$KERNEL_CONFIG $PACKAGE_KERNEL_DIR
 	popd
 	pushd ${DOWNLOADS}/firmware
 		cp rpi-bootloader.tar.gz* $PACKAGE_FIRMWARE_DIR
 	popd
-	echo "v$KERNEL_VERSION-rancher" > /source/dist/version
 echo "`green [FINISHED]` copy necessary files to the dest..."
 
